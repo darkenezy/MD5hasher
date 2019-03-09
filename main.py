@@ -55,8 +55,9 @@ if __name__ == "__main__":
         
     except KeyboardInterrupt:
         print("Fininshing...")
-        loop.run_until_complete(storage["session"].close())
         loop.run_until_complete(asyncio.gather(*storage["futures"]))
+        loop.run_until_complete(storage["session"].close())
+        
         
     except Exception as e:
         print(e)
