@@ -21,7 +21,7 @@ async def submit(request):
     email = request.query.get("email")
     
     uuid = str(uuid4())
-    storage[uuid] = HashRequest(url)
+    storage[uuid] = HashRequest(url, storage)
     
     return web.json_response({"id": uuid})
 
