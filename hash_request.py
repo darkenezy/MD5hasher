@@ -27,7 +27,7 @@ class HashRequest():
             
 
     async def get_hash(self):
-        self.hash = md5()
+        self._hash = md5()
         try:
             async with self.storage["session"].get(self._url) as resp:
                 if resp.status == 404:
