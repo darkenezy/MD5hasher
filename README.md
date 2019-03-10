@@ -4,7 +4,9 @@ Web service to get md5 of any resourse on the Internet
 ## Requirements
 * python 3.6+
 * aiohttp
-`pip install aiohttp==3.4.4`
+`pip install "aiohttp==3.4.4"`
+or
+`pip install -r requirements.txt`
 
 ## Usage
 ### Run the service
