@@ -1,12 +1,13 @@
 import asyncio     
 from hashlib import md5
+from email.mime.text import MIMEText
 
 
 class HashRequest():
-    def __init__(self, url, storage, email=None):
+    def __init__(self, url, storage, email):
         self._url = url
         self._email = email
-        
+            
         self._status = "running"
         self.storage = storage
         self._hash = None
@@ -40,21 +41,19 @@ class HashRequest():
                         self._hash.update(chunk)
                         
                     self._status = "done"
-                    if self.email:
-                        await self.send_email()
+
+                    if self._email:
+                        asyncio.ensure_future(self.send_email())
                         
         except Exception as e:
             self._status = "failed"
             
     async def send_email(self):
-        # Google API Auth
-        # https://developers.google.com/gmail/api/auth/web-server
-        token = "TOKEN"
-        url = 'https://www.googleapis.com/gmail/v1/users/{}/messages/send'.format(self.email)
-        headers = {'Authorization':  'Bearer ' + token}
-
-        # Creating message
-        # See https://developers.google.com/gmail/api/guides/sending
-        data = {'raw': 'msg_object'}
-        await self.storage['session'].post(url, headers=headers, data=data)
+        answer = "url: {}\nmd5: {}".format(self._url, self._hash.hexdigest())
+        
+        message = MIMEText(answer)
+        message["To"] = self._email
+        message["Subject"] = "MD5hasher - results"
+        
+        await self.storage["smtp"].send_message(message)
         
