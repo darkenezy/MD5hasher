@@ -1,4 +1,4 @@
-import asyncio
+import asyncio     
 from hashlib import md5
 
 
@@ -41,7 +41,20 @@ class HashRequest():
                         
                     self._status = "done"
                     if self.email:
-                        pass #ToDo: send email? async lib needed
-
+                        await self.send_email()
+                        
         except Exception as e:
             self._status = "failed"
+            
+    async def send_email(self):
+        # Google API Auth
+        # https://developers.google.com/gmail/api/auth/web-server
+        token = "TOKEN"
+        url = 'https://www.googleapis.com/gmail/v1/users/{}/messages/send'.format(self.email)
+        headers = {'Authorization':  'Bearer ' + token}
+
+        # Creating message
+        # See https://developers.google.com/gmail/api/guides/sending
+        data = {'raw': 'msg_object'}
+        await self.storage['session'].post(url, headers=headers, data=data)
+        
